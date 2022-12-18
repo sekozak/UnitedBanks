@@ -1,25 +1,29 @@
 package pl.edu.agh.bankosdelakolunios.api.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import pl.edu.agh.bankosdelakolunios.Transaction;
+import lombok.Data;
+import pl.edu.agh.bankosdelakolunios.domain.model.Transaction;
+
 import java.time.LocalDate;
 
-@Getter
-@Setter
+
+@Data
 public class CreateTransactionRequest{
     LocalDate operationDate;
     String transactionType;
     String amount;
     String currency;
     String title;
+    String balance;
+    String bank;
 
-    public CreateTransactionRequest(LocalDate operationDate, String transactionType, String amount, String currency, String title) {
+    public CreateTransactionRequest(LocalDate operationDate, String transactionType, String amount, String currency, String title, String balance, String bank) {
         this.operationDate = operationDate;
         this.transactionType = transactionType;
         this.amount = amount;
         this.currency = currency;
         this.title = title;
+        this.bank = bank;
+        this.balance = balance;
     }
 
     public Transaction createTransaction(){
@@ -29,18 +33,10 @@ public class CreateTransactionRequest{
                 .amount(amount)
                 .currency(currency)
                 .title(title)
+                .bank(bank)
+                .balance(balance)
                 .build();
     }
 
 
-    @Override
-    public String toString() {
-        return "CreateTransactionRequest{" +
-                "operationDate=" + operationDate +
-                ", transactionType='" + transactionType + '\'' +
-                ", amount='" + amount + '\'' +
-                ", currency='" + currency + '\'' +
-                ", title='" + title + '\'' +
-                '}';
-    }
 }
