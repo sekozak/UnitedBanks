@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.VBox?>
+<BorderPane prefWidth="400.0" prefHeight="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presenter.TransactionEditDialogPresenter">
+    <center>
+        <GridPane hgap="5.0" vgap="5.0" BorderPane.alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" />
+                <RowConstraints minHeight="10.0" />
+                <RowConstraints minHeight="10.0" />
+                <RowConstraints minHeight="10.0" />
+            </rowConstraints>
+                    <Label text="ID" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                        <GridPane.margin><Insets bottom="0.0" left="5.0" right="5.0" top="5.0" /></GridPane.margin>
+                    </Label>
+                    <Label text="Title" GridPane.rowIndex="1" GridPane.columnIndex="0">
+                        <GridPane.margin><Insets bottom="0.0" left="5.0" right="5.0" top="5.0" /></GridPane.margin>
+                    </Label>
+                    <Label fx:id="IDTextField" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                        <GridPane.margin><Insets bottom="0.0" left="5.0" right="5.0" top="5.0" /></GridPane.margin>
+                    </Label>
+                    <Label fx:id="titleTextField" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <GridPane.margin><Insets bottom="0.0" left="5.0" right="5.0" top="5.0" /></GridPane.margin>
+                    </Label>
+                    <HBox fx:id="tagChooserHBox" GridPane.rowIndex="2" >
+                        <VBox fx:id="vBox1">
+                            <CheckBox fx:id="tag1" text="tag1"/>
+                            <CheckBox fx:id="tag2" text="tag2"/>
+                            <CheckBox fx:id="tag3" text="tag3"/>
+                            <CheckBox fx:id="tag4" text="tag4"/>
+                            <CheckBox fx:id="tag5" text="tag5"/>
+                        </VBox>
+                    </HBox>
+        </GridPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="BOTTOM_RIGHT" spacing="5.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button mnemonicParsing="false" onAction="#handleSaveAction"  text="SAVE">
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin></Button>
+                <Button mnemonicParsing="false" onAction="#handleCloseAction"  text="CLOSE">
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin></Button>
+            </children>
+            <BorderPane.margin>
+                <Insets bottom="0.0" left="5.0" right="5.0" top="5.0" />
+            </BorderPane.margin>
+        </HBox>
+    </bottom>
+    <opaqueInsets>
+        <Insets />
+    </opaqueInsets>
+</BorderPane>
