@@ -20,7 +20,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +29,7 @@ public class TransactionController {
     private ObservableList<Transaction> transactions;
     private AppController appController;
     private final List<String> checkTags = new ArrayList<>();
+    private final List<String> tagList = new ArrayList<>();
     @FXML
     private TableView<Transaction> transactionsTable;
     @FXML
@@ -49,17 +49,23 @@ public class TransactionController {
     @FXML
     private TableColumn<Transaction, String> bankColumn;
     @FXML
-    private Button requestButton;
-    @FXML
     private VBox vBox1;
     @FXML
     private VBox mainVBox;
     @FXML
     private HBox tagChooserHBox;
     @FXML
+    public HBox pagingBox;
+    @FXML
     private Label title;
     @FXML
     private Button editButton;
+    @FXML
+    private Button firstButton, previousButton, nextButton, lastButton;
+    @FXML
+    private Label pageNumber;
+    private Integer size = 20;
+    private Integer currentPage = 1, lastPage = 1;
 
 
     @FXML
@@ -103,45 +109,59 @@ public class TransactionController {
         tagChooserHBox.setPadding(new Insets(5, 5, 5, 5));
         tagChooserHBox.setSpacing(5);
 
-        Font font = Font.font("Verdana", FontPosture.REGULAR, 15);
-        Iterator<Node> nodes = tagChooserHBox.getChildren().iterator();
-        List<CheckBox> checkBoxes = new ArrayList<>();
+        HBox.setMargin(pageNumber, new Insets(5));
 
-        while (nodes.hasNext()) {
-            VBox vBox = (VBox) nodes.next();
-            vBox.setSpacing(5);
-
-            Iterator<Node> vBoxNodes = vBox.getChildren().iterator();
-
-            while (vBoxNodes.hasNext()) {
-                Node node = vBoxNodes.next();
-                if (node instanceof CheckBox) {
-                    CheckBox checkBox = (CheckBox) node;
-                    checkBoxes.add(checkBox);
-                    checkBox.setFont(font);
-
-                    checkBox.setOnAction((event) -> {
-                        String tag = checkBox.getText();
-                        if (checkTags.contains(tag)) checkTags.remove(tag);
-                        else checkTags.add(tag);
-
-                        try {
-                            if(checkTags.size()!=0) sendRequestForTaggedTransactions();
-                            else sendRequestForAllTransactions();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
-
-                }
+        firstButton.setOnAction(event -> {
+            currentPage=1;
+            getPage(0);
+        });
+        nextButton.setOnAction(event -> {
+            if(currentPage<lastPage) {
+                getPage(++currentPage-1);
             }
-
-        }
-
+        });
+        previousButton.setOnAction(event -> {
+            if(currentPage>1) {
+                getPage(--currentPage-1);
+            }
+        });
+        lastButton.setOnAction(event -> {
+            currentPage=lastPage;
+            getPage(currentPage-1);
+        });
     }
 
     public void setAppController(AppController appController) {
         this.appController = appController;
+        setFilters();
+        getPage(0);
+    }
+
+
+    private void setFilters(){
+        Font font = Font.font("Verdana", FontPosture.REGULAR, 15);
+        List<CheckBox> checkBoxes = new ArrayList<>();
+
+        appController.tagList.forEach(tag -> vBox1.getChildren().add(new CheckBox(tag) ));
+        Iterator<Node> vBoxNodes = vBox1.getChildren().iterator();
+
+        while (vBoxNodes.hasNext()) {
+            Node node = vBoxNodes.next();
+            if (node instanceof CheckBox) {
+                CheckBox checkBox = (CheckBox) node;
+                checkBoxes.add(checkBox);
+                checkBox.setFont(font);
+
+                checkBox.setOnAction((event) -> {
+                    String tag = checkBox.getText();
+                    if (checkTags.contains(tag)) checkTags.remove(tag);
+                    else checkTags.add(tag);
+
+                    currentPage=1;
+                    getPage(0);
+                });
+            }
+        }
     }
 
     public void setData(ObservableList<Transaction> transactions) {
@@ -149,13 +169,8 @@ public class TransactionController {
         transactionsTable.setItems(this.transactions);
     }
 
-    @FXML
-    private void sendRequestForAllTransactions() throws IOException {
-        appController.sendRequestForAllTransactions();
-    }
-
-    private void sendRequestForTaggedTransactions() throws IOException {
-        appController.sendRequestForTaggedTransactions(checkTags);
+    public void setLastPageNumber(Integer last) {
+        this.lastPage=last;
     }
 
     @FXML
@@ -166,5 +181,10 @@ public class TransactionController {
         }
     }
 
+    private void getPage(Integer page){
+        if(checkTags.size()==0) appController.sendRequestForPages(page, size, null);
+        else appController.sendRequestForPages(page, size, checkTags);
+        pageNumber.setText(currentPage.toString());
+    }
 
 }

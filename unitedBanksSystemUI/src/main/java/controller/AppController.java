@@ -2,6 +2,8 @@ package controller;
 
 import driver.BankService;
 import driver.RetrofitClient;
+import driver.model.Pages;
+import driver.model.PagesResponse;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -20,11 +22,13 @@ public class AppController {
     private final Stage primaryStage;
     private TransactionController controller;
     private final BankService service;
+    public List<String> tagList;
 
 
     public AppController(Stage primaryStage) {
         this.primaryStage = primaryStage;
         service = new RetrofitClient().getRetrofitClient().create(BankService.class);
+        getTagList();
     }
 
     public void initRootLayout() {
@@ -53,14 +57,14 @@ public class AppController {
             // Load the fxml file and create a new stage for the dialog
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(TransactionController.class.getResource("../view/TransactionEditDialog.fxml"));
-            BorderPane page = loader.load();
+            BorderPane pane = loader.load();
 
             // Create the dialog Stage.
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Tag manager");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
-            Scene scene = new Scene(page);
+            Scene scene = new Scene(pane);
             dialogStage.setScene(scene);
 
             // Set the transaction into the presenter.
@@ -79,17 +83,7 @@ public class AppController {
         }
     }
 
-    public void sendRequestForAllTransactions() throws IOException {
-        ObservableList<Transaction> transactions = FXCollections.observableArrayList();
-        service.getTransactions().execute().body().forEach(transactionResponse -> transactions.add(transactionResponse.createTransaction()));
-        controller.setData(transactions);
-    }
 
-    public void sendRequestForTaggedTransactions(List<String> checkTags) throws IOException {
-        ObservableList<Transaction> transactions = FXCollections.observableArrayList();
-        service.getTaggedTransactions(checkTags).execute().body().forEach(transactionResponse -> transactions.add(transactionResponse.createTransaction()));
-        controller.setData(transactions);
-    }
 
     public void sentTransactionTagsUpdate(Integer transactionId, List<String> tags) {
         try {
@@ -97,5 +91,34 @@ public class AppController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    };
+    }
+
+    private void getTagList() {
+        try {
+            this.tagList = service.getTagList().execute().body();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendRequestForPages(Integer page, Integer size, List<String> tags) {
+        ObservableList<Transaction> transactions = FXCollections.observableArrayList();
+        PagesResponse pagesResponse;
+        Pages pages;
+        Integer lastPage=0;
+        try {
+            pagesResponse = service.getPages(page, size, tags).execute().body();
+            assert pagesResponse != null;
+            pages = pagesResponse.createPage();
+            transactions.addAll(pages.getTransactions());
+            lastPage=pages.getTotalPages();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        controller.setData(transactions);
+        controller.setLastPageNumber(lastPage);
+    }
+
 }

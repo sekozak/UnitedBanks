@@ -51,6 +51,21 @@ public class TransactionEditDialogPresenter {
         tagChooserHBox.setSpacing(5);
         tagChooserHBox.setPadding(new Insets(5, 5, 5, 5));
         tagChooserHBox.setSpacing(5);
+    }
+
+    public void setDialogStage(Stage dialogStage) {
+        this.dialogStage = dialogStage;
+    }
+
+    public void setController(AppController appController) {
+        this.appController = appController;
+        setFilters();
+        updateControls();
+    }
+
+    private void setFilters(){
+        appController.tagList.forEach(tag -> vBox1.getChildren().add(new CheckBox(tag) ));
+
         Font font = Font.font("Verdana", FontPosture.REGULAR, 15);
         Iterator<Node> nodes = tagChooserHBox.getChildren().iterator();
         checkBoxes = new ArrayList<>();
@@ -72,27 +87,13 @@ public class TransactionEditDialogPresenter {
                         String tag = checkBox.getText();
                         if (checkTags.contains(tag)) checkTags.remove(tag);
                         else checkTags.add(tag);
-
                     });
-
                 }
             }
-
         }
     }
 
-    public void setDialogStage(Stage dialogStage) {
-        this.dialogStage = dialogStage;
-    }
-
-    public void setController(AppController appController) {
-        this.appController = appController;
-    }
-
-    public void setData(Transaction transaction) {
-        this.transaction = transaction;
-        updateControls();
-    }
+    public void setData(Transaction transaction) {this.transaction = transaction;}
 
     public boolean isApproved() {
         return approved;

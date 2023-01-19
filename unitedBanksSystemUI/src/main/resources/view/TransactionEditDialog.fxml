@@ -37,11 +37,7 @@
                     </Label>
                     <HBox fx:id="tagChooserHBox" GridPane.rowIndex="2" >
                         <VBox fx:id="vBox1">
-                            <CheckBox fx:id="tag1" text="tag1"/>
-                            <CheckBox fx:id="tag2" text="tag2"/>
-                            <CheckBox fx:id="tag3" text="tag3"/>
-                            <CheckBox fx:id="tag4" text="tag4"/>
-                            <CheckBox fx:id="tag5" text="tag5"/>
+
                         </VBox>
                     </HBox>
         </GridPane>

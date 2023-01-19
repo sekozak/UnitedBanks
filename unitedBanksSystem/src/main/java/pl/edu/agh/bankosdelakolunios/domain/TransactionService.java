@@ -1,8 +1,8 @@
 package pl.edu.agh.bankosdelakolunios.domain;
 
-import pl.edu.agh.bankosdelakolunios.domain.model.Tag;
-import pl.edu.agh.bankosdelakolunios.domain.model.Transaction;
-import pl.edu.agh.bankosdelakolunios.domain.model.TransactionHistory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import pl.edu.agh.bankosdelakolunios.domain.model.*;
 import pl.edu.agh.bankosdelakolunios.domain.ports.TransactionHistoryFileReader;
 import pl.edu.agh.bankosdelakolunios.domain.ports.TransactionRepository;
 
@@ -25,13 +25,9 @@ public class TransactionService {
         transactionHistory.transactions().forEach(System.out::println);
     }
 
-    public List<Transaction> getTransactions() {
-        return transactionRepository.findAll();
-    }
 
-    public List<Transaction> getTaggedTransactions(List<String> tags) {
-        return transactionRepository.findTaggedTransactions(tags, tags.size());
-    }
+    public Page<Transaction> getPages(Pageable paging) { return transactionRepository.findAll(paging); }
+    public Page<Transaction> getPages(List<String> tags, Pageable paging) {return transactionRepository.findAllTaggedPages(tags, tags.size(), paging);}
 
     public Transaction saveTransaction(Transaction transaction){
         return transactionRepository.save(transaction);
@@ -43,5 +39,9 @@ public class TransactionService {
             transaction.getTags().add(new Tag(tag));
         });
         return transactionRepository.save(transaction);
+    }
+
+    public List<String> getTags() {
+        return new TagList().getTags();
     }
 }
