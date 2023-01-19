@@ -13,4 +13,6 @@ Nasz system obserwuje storage, czyli folder do którego możemy wrzucać wyciąg
 Po dodaniu pliku z odpowiednim przedimkiem, nasz system indetyfikuje bank z którego pochodzi plik i wyciagnie z niego najważniejsze dla nas informacje,
 wspólne dla wszytkich banków (obecnie obsługujemy historie transakacji z dwóch banków: Millennium oraz PKOBP, ale jest to w łatwy sposób rozszeżalne).<br/> 
 
+W celu zapobiegnięcia przeciążenia naszego frontendu zbyt dużą ilością transakcji zaimplementowana jest paginacja czyli stronnicowanie danych. <br/> 
+
 Wymiana danych w API realizowana jest za pomocą Retrofit. Proste UI wyświetla tabelę z rekordami transakcji ze wszystkich banków z możliwością tagowania poszczegolnych rekordów oraz filtrowania ich po danych tagach. <br/> 
