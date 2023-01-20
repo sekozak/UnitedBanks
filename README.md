@@ -15,4 +15,7 @@ wspólne dla wszytkich banków (obecnie obsługujemy historie transakacji z dwó
 
 W celu zapobiegnięcia przeciążenia naszego frontendu zbyt dużą ilością transakcji zaimplementowana jest paginacja czyli stronnicowanie danych. <br/> 
 
-Wymiana danych w API realizowana jest za pomocą Retrofit. Proste UI wyświetla tabelę z rekordami transakcji ze wszystkich banków z możliwością tagowania poszczegolnych rekordów oraz filtrowania ich po danych tagach. <br/> 
+Wymiana danych w API realizowana jest za pomocą Retrofit. Proste UI wyświetla tabelę z rekordami transakcji ze wszystkich banków z możliwością tagowania poszczegolnych rekordów oraz filtrowania ich po danych tagach. <br/> <br/> 
+
+### Widok:
+<img src="view.png"/>
