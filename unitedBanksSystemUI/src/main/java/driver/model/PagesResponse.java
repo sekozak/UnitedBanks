@@ -7,20 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PagesResponse {
-    private final List<TransactionResponse> transactions;
-    private final Integer currentPage;
-    private final Integer totalItems;
+    private final List<TransactionResponse> content;
+    private final Integer number;
+    private final Integer totalElements;
     private final Integer totalPages;
 
     public PagesResponse(List<TransactionResponse> transactionsRes, Integer currentPage, Integer totalItems, Integer totalPages) {
-        this.transactions = transactionsRes;
-        this.currentPage = currentPage;
-        this.totalItems = totalItems;
+        this.content = transactionsRes;
+        this.number = currentPage;
+        this.totalElements = totalItems;
         this.totalPages = totalPages;
     }
 
     public Pages createPage() {
-        return new Pages(currentPage, totalItems, totalPages, convertSetToList(transactions));
+        return new Pages(number, totalElements, totalPages, convertSetToList(content));
     }
 
     private List<Transaction> convertSetToList(List<TransactionResponse> transactionsRes){
@@ -32,8 +32,4 @@ public class PagesResponse {
     }
 
 
-    public List<TransactionResponse> getTransactionsRes() {return transactions;}
-    public Integer getCurrentPage() {return currentPage;}
-    public Integer getTotalItems() {return totalItems;}
-    public Integer getTotalPages() {return totalPages;}
 }

@@ -28,12 +28,12 @@ public class AppController {
     public AppController(Stage primaryStage) {
         this.primaryStage = primaryStage;
         service = new RetrofitClient().getRetrofitClient().create(BankService.class);
-        getTagList();
     }
 
     public void initRootLayout() {
         try {
             this.primaryStage.setTitle("BankosDeLaKolunios");
+            getTagList();
 
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(AppController.class.getResource("../view/TransactionsPane.fxml"));
@@ -41,6 +41,7 @@ public class AppController {
 
             controller = loader.getController();
             controller.setAppController(this);
+            controller.setTagList(tagList);
 
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
@@ -71,6 +72,7 @@ public class AppController {
             TransactionEditDialogPresenter presenter = loader.getController();
             presenter.setDialogStage(dialogStage);
             presenter.setData(transaction);
+            presenter.setTagList(tagList);
             presenter.setController(this);
 
             // Show the dialog and wait until the user closes it

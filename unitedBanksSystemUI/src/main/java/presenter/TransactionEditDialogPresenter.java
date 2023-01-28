@@ -6,7 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -19,7 +18,6 @@ import javafx.stage.Stage;
 import model.Transaction;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -30,6 +28,7 @@ public class TransactionEditDialogPresenter {
     private boolean approved;
     private List<CheckBox> checkBoxes;
     private ObservableList<String> checkTags = FXCollections.observableArrayList();
+    private List<String> tagList = new ArrayList<>();
     @FXML
     private Label IDTextField;
     @FXML
@@ -59,41 +58,39 @@ public class TransactionEditDialogPresenter {
 
     public void setController(AppController appController) {
         this.appController = appController;
-        setFilters();
         updateControls();
     }
 
-    private void setFilters(){
-        appController.tagList.forEach(tag -> vBox1.getChildren().add(new CheckBox(tag) ));
+    private CheckBox createCheckbox(String tag){
+        CheckBox checkBox = new CheckBox(tag);
 
         Font font = Font.font("Verdana", FontPosture.REGULAR, 15);
-        Iterator<Node> nodes = tagChooserHBox.getChildren().iterator();
+        checkBox.setFont(font);
+
+        checkBox.setOnAction((event) -> {
+            String t = checkBox.getText();
+            if (checkTags.contains(t)) checkTags.remove(t);
+            else checkTags.add(t);
+        });
+        checkBoxes.add(checkBox);
+
+        return checkBox;
+    }
+
+    public void setTagEditor(){
         checkBoxes = new ArrayList<>();
+        tagList.forEach(tag -> vBox1.getChildren().add(createCheckbox(tag)));
 
-        while (nodes.hasNext()) {
-            VBox vBox = (VBox) nodes.next();
-            vBox.setSpacing(5);
-
-            Iterator<Node> vBoxNodes = vBox.getChildren().iterator();
-
-            while (vBoxNodes.hasNext()) {
-                Node node = vBoxNodes.next();
-                if (node instanceof CheckBox) {
-                    CheckBox checkBox = (CheckBox) node;
-                    checkBoxes.add(checkBox);
-                    checkBox.setFont(font);
-
-                    checkBox.setOnAction((event) -> {
-                        String tag = checkBox.getText();
-                        if (checkTags.contains(tag)) checkTags.remove(tag);
-                        else checkTags.add(tag);
-                    });
-                }
-            }
+        for(CheckBox cb : checkBoxes){
+            if(checkTags.contains(cb.getText())) cb.setSelected(true);
         }
     }
 
     public void setData(Transaction transaction) {this.transaction = transaction;}
+
+    public void setTagList(List<String> tagList) {
+        this.tagList = tagList;
+    }
 
     public boolean isApproved() {
         return approved;
@@ -114,8 +111,6 @@ public class TransactionEditDialogPresenter {
         IDTextField.setText(transaction.getId());
         titleTextField.setText(transaction.getTitle());
         checkTags = transaction.getTags();
-        for(CheckBox cb : checkBoxes){
-            if(checkTags.contains(cb.getText())) cb.setSelected(true);
-        }
+        setTagEditor();
     }
 }
