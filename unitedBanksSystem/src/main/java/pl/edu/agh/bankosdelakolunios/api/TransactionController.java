@@ -1,17 +1,17 @@
 package pl.edu.agh.bankosdelakolunios.api;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.agh.bankosdelakolunios.api.model.CreateTransactionRequest;
-import pl.edu.agh.bankosdelakolunios.domain.model.PagesResponse;
 import pl.edu.agh.bankosdelakolunios.domain.model.Transaction;
 import pl.edu.agh.bankosdelakolunios.domain.TransactionService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/transactions")
@@ -28,33 +28,27 @@ public class TransactionController {
     }
 
     @PostMapping("/{transactionId}/tags")
-    public ResponseEntity<Transaction> updateTransactionTags(@PathVariable Integer transactionId, @RequestBody List<String> tags) {
-        Transaction transaction = transactionService.updateTransactionTags(transactionId, tags);
-        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
+    public ResponseEntity<Optional<Transaction>> updateTransactionTags(@PathVariable Integer transactionId, @RequestBody List<String> tags) {
+        Optional<Transaction> transaction = transactionService.updateTransactionTags(transactionId, tags);
+        if(transaction.isPresent()){
+            return new ResponseEntity<>(transaction, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(transaction, HttpStatus.NOT_FOUND);
     }
 
 
     @GetMapping
-    public ResponseEntity<PagesResponse> getPages(
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "size", defaultValue = "3") Integer size,
+    public ResponseEntity<Page<Transaction>> getPages(
+            @PageableDefault(value = 20, page = 0) Pageable paging,
             @RequestParam(value = "tags", required = false) List<String> tags
     ){
         try {
-            Pageable paging = PageRequest.of(page, size);
             Page<Transaction> pagedTransactions;
 
             if (tags == null) pagedTransactions = transactionService.getPages(paging);
             else pagedTransactions = transactionService.getPages(tags, paging);
 
-            PagesResponse pageResponse = new PagesResponse(
-                    pagedTransactions.getContent(),
-                    pagedTransactions.getNumber(),
-                    (int) pagedTransactions.getTotalElements(),
-                    pagedTransactions.getTotalPages()
-            );
-
-            return new ResponseEntity<>(pageResponse, HttpStatus.OK);
+            return new ResponseEntity<>(pagedTransactions, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

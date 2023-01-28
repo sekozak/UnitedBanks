@@ -8,6 +8,7 @@ import pl.edu.agh.bankosdelakolunios.domain.ports.TransactionRepository;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 public class TransactionService {
     private final TransactionRepository transactionRepository;
@@ -32,13 +33,17 @@ public class TransactionService {
     public Transaction saveTransaction(Transaction transaction){
         return transactionRepository.save(transaction);
     }
-    public Transaction updateTransactionTags(Integer transactionId, List<String> tags){
-        Transaction transaction = transactionRepository.findById(transactionId).orElseThrow(() -> new IllegalStateException("Could not find transaction"));
-        transaction.getTags().clear();
-        tags.forEach(tag -> {
-            transaction.getTags().add(new Tag(tag));
-        });
-        return transactionRepository.save(transaction);
+    public Optional<Transaction> updateTransactionTags(Integer transactionId, List<String> tags){
+        Optional<Transaction> oTransaction = transactionRepository.findById(transactionId);
+        if (oTransaction.isPresent()) {
+            Transaction transaction = oTransaction.get();
+            transaction.getTags().clear();
+            tags.forEach(tag -> {
+                transaction.getTags().add(new Tag(tag));
+            });
+            transactionRepository.save(transaction);
+        }
+        return oTransaction;
     }
 
     public List<String> getTags() {
